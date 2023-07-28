@@ -9,7 +9,7 @@ pipeline{
     stages{
         stage('SCM'){
             steps{
-                git credentialsId: 'github', 
+                git credentialsId: 'github',
                     url: 'https://github.com/souhaillechheb/eval-jenkins.git',
                     branch: 'main'
             }
@@ -23,9 +23,14 @@ pipeline{
 
         stage('Docker Build'){
             steps{
-                sh "docker build . -t app:${DOCKER_TAG}   "
+                sh "docker build . -t souhail:${DOCKER_TAG}   "
             }
         }
 
     }
+}
+
+def getVersion(){
+    def commitHash = sh label: '', returnStdout: true, script: 'git rev-parse --short HEAD'
+    return commitHash
 }
