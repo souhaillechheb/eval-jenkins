@@ -14,23 +14,18 @@ pipeline{
                     branch: 'main'
             }
         }
-        
+
         stage('Maven Build'){
             steps{
                 sh "mvn clean package"
             }
         }
-        
+
         stage('Docker Build'){
             steps{
-                sh "docker build . -t souhailapp:${DOCKER_TAG}   "
+                sh "docker build . -t app:${DOCKER_TAG}   "
             }
         }
-        
-    }
-}
 
-def getVersion(){
-    def commitHash = sh label: '', returnStdout: true, script: 'git rev-parse --short HEAD'
-    return commitHash
+    }
 }
