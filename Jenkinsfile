@@ -1,36 +1,27 @@
-pipeline{
+pipeline {
     agent any
     tools {
       maven 'MVN_HOME'
     }
-    environment {
-      DOCKER_TAG = getVersion()
-    }
-    stages{
-        stage('SCM'){
-            steps{
-                git credentialsId: 'github',
-                    url: 'https://github.com/souhaillechheb/eval-jenkins.git',
-                    branch: 'main'
+    stages {
+
+        stage('Build') {
+            steps {
+                bat "mvn clean package"
+            }
+            post{
+                success{
+                    echo "Archiving the Artifacts"
+                    archiveArtifacts artifacts: '**/target/*.war'
+                }
             }
         }
 
-        stage('Maven Build'){
+        stage('Deploy to Tomcat server'){
             steps{
-                sh "mvn clean package"
-            }
-        }
-
-        stage('Docker Build'){
-            steps{
-                sh "docker build . -t souhailapp:${DOCKER_TAG}   "
-            }
+                deploy adapters: [tomcat9(credentialsId: 'jenkinsDeployer2', path: '', url: 'http://localhost:9080/')], contextPath: null, war: '**/*.war'
+                    }
         }
 
     }
-}
-
-def getVersion(){
-    def commitHash = sh label: '', returnStdout: true, script: 'git rev-parse --short HEAD'
-    return commitHash
 }
