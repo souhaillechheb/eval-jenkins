@@ -23,7 +23,7 @@ pipeline{
 
         stage('Docker Build'){
             steps{
-                sh "docker build . -t souhailappg:${DOCKER_TAG}   "
+                sh "docker build . -t souhailapp:${DOCKER_TAG}   "
             }
         }
 
